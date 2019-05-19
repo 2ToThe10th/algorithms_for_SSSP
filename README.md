@@ -1,1 +1,1 @@
-# algorithms_for_SSSP
+# algorithms for SSSP
