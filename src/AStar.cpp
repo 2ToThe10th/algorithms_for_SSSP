@@ -11,7 +11,7 @@ void AStar::InitByEdgesDirected(int n, vector<pair<pair<int, int>, long long>> v
 
 
 void AStar::InitByEdgesUndirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
-  graf.resize(2*n);
+  graf.resize(n);
   for(auto edge: vector_of_edges) {
     graf[edge.first.first].push_back(Vertex(edge.first.second, edge.second));
     graf[edge.first.second].push_back(Vertex(edge.first.first, edge.second));

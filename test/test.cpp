@@ -4,6 +4,7 @@
 #include <SPFA.h>
 #include <chrono>
 #include <AStar.h>
+#include <Thorup.h>
 #include "DijkstraWithHeap.h"
 #include "DijkstraWithFibonacciHeap.h"
 #include "BellmanFord.h"
@@ -13,12 +14,16 @@ using std::cout;
 using std::endl;
 using std::pair;
 
-const int TEST_QUANTITY = 20;
+const int TEST_QUANTITY = 1;
 const int MAP_SIZE = 3e2;
 const int N = 1e4;
 
 TEST(Thorup, test) {
+  auto thorup = new Thorup();
 
+  thorup->InitByEdgesUndirected(5, {{{0, 1}, 4}, {{1, 4}, 3}, {{2, 3}, 5}});
+
+  cout << thorup->Do(0 , 4);
 }
 
 TEST(SpeedTest, RandomDirectedGraph) {
