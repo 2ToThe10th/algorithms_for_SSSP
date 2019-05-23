@@ -1,5 +1,5 @@
-#ifndef SSSP_SRC_DIJKSTRAWITHHEAP_H_
-#define SSSP_SRC_DIJKSTRAWITHHEAP_H_
+#ifndef SSSP_SRC_ASTAR_H_
+#define SSSP_SRC_ASTAR_H_
 
 #include <queue>
 #include "SSSP.h"
@@ -8,7 +8,7 @@ using std::vector;
 using std::pair;
 using std::priority_queue;
 
-class DijkstraWithHeap: public SSSP {
+class AStar: public SSSP {
  private:
 
   struct Vertex {
@@ -20,12 +20,25 @@ class DijkstraWithHeap: public SSSP {
     }
   };
 
+  struct ExpextedVertex {
+    int vertex;
+    long long distance;
+    long long expected_distance;
+    ExpextedVertex(int vertex, long long distance, long long expected_distance): vertex(vertex), distance(distance), expected_distance(expected_distance) {};
+    const bool operator<(ExpextedVertex other) const {
+      return expected_distance > other.expected_distance;
+    }
+  };
+
+  vector<int> x;
+  vector<int> y;
   vector<vector<Vertex>> graf;
  public:
   void InitByEdgesDirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) override;
   void InitByEdgesUndirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) override;
+  AStar(int n, int* x_from, int* y_from);
 
   long long Do(int start_vertex, int end_vertex) override;
 };
 
-#endif //SSSP_SRC_DIJKSTRAWITHHEAP_H_
+#endif //SSSP_SRC_ASTAR_H_

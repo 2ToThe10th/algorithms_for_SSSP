@@ -1,13 +1,13 @@
 #ifndef SSSP_SRC_BELLMANFORD_H_
 #define SSSP_SRC_BELLMANFORD_H_
 
-#include "Heap.h"
+#include "SSSP.h"
 
 using std::vector;
 using std::pair;
 
 
-class BellmanFord: public Heap {
+class BellmanFord: public SSSP {
  private:
   struct Edge{
     int start_vertex;
@@ -19,7 +19,8 @@ class BellmanFord: public Heap {
   int number_of_vertex;
   vector<Edge> edges;
  public:
-  void InitByEdges(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) override;
+  void InitByEdgesDirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) override;
+  void InitByEdgesUndirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) override;
 
   long long Do(int start_vertex, int end_vertex) override;
 };

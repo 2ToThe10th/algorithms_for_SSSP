@@ -2,10 +2,19 @@
 #include <climits>
 
 
-void BellmanFord::InitByEdges(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
+void BellmanFord::InitByEdgesDirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
   number_of_vertex = n;
   for(auto edge: vector_of_edges) {
     edges.push_back(Edge(edge.first.first, edge.first.second, edge.second));
+  }
+}
+
+
+void BellmanFord::InitByEdgesUndirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
+  number_of_vertex = 2*n;
+  for(auto edge: vector_of_edges) {
+    edges.push_back(Edge(edge.first.first, edge.first.second, edge.second));
+    edges.push_back(Edge(edge.first.second, edge.first.first, edge.second));
   }
 }
 

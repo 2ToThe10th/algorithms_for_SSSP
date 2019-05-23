@@ -1,8 +1,9 @@
-#include "DijkstraWithHeap.h"
+#include "DijkstraWithFibonacciHeap.h"
 #include <climits>
+#include <boost/heap/fibonacci_heap.hpp>
 
 
-void DijkstraWithHeap::InitByEdgesDirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
+void DijkstraWithFibonacciHeap::InitByEdgesDirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
   graf.resize(n);
   for(auto edge: vector_of_edges) {
     graf[edge.first.first].push_back(Vertex(edge.first.second, edge.second));
@@ -10,7 +11,7 @@ void DijkstraWithHeap::InitByEdgesDirected(int n, vector<pair<pair<int, int>, lo
 }
 
 
-void DijkstraWithHeap::InitByEdgesUndirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
+void DijkstraWithFibonacciHeap::InitByEdgesUndirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
   graf.resize(2*n);
   for(auto edge: vector_of_edges) {
     graf[edge.first.first].push_back(Vertex(edge.first.second, edge.second));
@@ -19,14 +20,14 @@ void DijkstraWithHeap::InitByEdgesUndirected(int n, vector<pair<pair<int, int>, 
 }
 
 
-long long DijkstraWithHeap::Do(int start_vertex, int end_vertex) {
+long long DijkstraWithFibonacciHeap::Do(int start_vertex, int end_vertex) {
   auto distance = new long long[graf.size()];
 
   for(unsigned int i = 0; i < graf.size(); ++i) {
     distance[i] = LONG_MAX;
   }
 
-  auto queue = new priority_queue<Vertex>;
+  auto queue = new boost::heap::fibonacci_heap<Vertex>;
   queue->push(Vertex(start_vertex, 0));
 
   while(!queue->empty()) {

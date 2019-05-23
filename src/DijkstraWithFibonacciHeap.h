@@ -1,19 +1,20 @@
-#ifndef SSSP_SRC_SPFA_H_
-#define SSSP_SRC_SPFA_H_
+#ifndef SSSP_SRC_DIJKSTRAWITHFIBONACCIHEAP_H_
+#define SSSP_SRC_DIJKSTRAWITHFIBONACCIHEAP_H_
 
 #include <queue>
 #include "SSSP.h"
 
 using std::vector;
 using std::pair;
+using std::priority_queue;
 
-class SPFA: public SSSP {
+class DijkstraWithFibonacciHeap: public SSSP {
  private:
 
   struct Vertex {
     int vertex;
     long long distance;
-    Vertex(int vertex, int distance): vertex(vertex), distance(distance) {};
+    Vertex(int vertex, long long distance): vertex(vertex), distance(distance) {};
     const bool operator<(Vertex other) const {
       return distance > other.distance;
     }
@@ -27,4 +28,4 @@ class SPFA: public SSSP {
   long long Do(int start_vertex, int end_vertex) override;
 };
 
-#endif //SSSP_SRC_SPFA_H_
+#endif //SSSP_SRC_DIJKSTRAWITHFIBONACCIHEAP_H_

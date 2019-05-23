@@ -10,7 +10,7 @@ include_directories(googletest/googletest/include)
 include_directories(src)
 include_directories(test)
 
-set(SOURCE_FILES src/main.cpp test/test.cpp src/DijkstraWithHeap.cpp src/DijkstraWithHeap.h src/Heap.h src/BellmanFord.cpp src/BellmanFord.h src/SPFA.cpp src/SPFA.h)
+set(SOURCE_FILES src/main.cpp test/test.cpp src/DijkstraWithHeap.cpp src/DijkstraWithHeap.h src/SSSP.h src/BellmanFord.cpp src/BellmanFord.h src/SPFA.cpp src/SPFA.h src/AStar.cpp src/AStar.h src/DijkstraWithFibonacciHeap.cpp src/DijkstraWithFibonacciHeap.h src/Thorup.cpp src/Thorup.h)
 
 add_executable(sssp ${SOURCE_FILES})
 target_link_libraries(sssp gtest gtest_main)

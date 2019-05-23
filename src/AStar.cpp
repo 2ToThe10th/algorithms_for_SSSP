@@ -1,8 +1,8 @@
-#include "DijkstraWithHeap.h"
+#include "AStar.h"
 #include <climits>
 
 
-void DijkstraWithHeap::InitByEdgesDirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
+void AStar::InitByEdgesDirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
   graf.resize(n);
   for(auto edge: vector_of_edges) {
     graf[edge.first.first].push_back(Vertex(edge.first.second, edge.second));
@@ -10,7 +10,7 @@ void DijkstraWithHeap::InitByEdgesDirected(int n, vector<pair<pair<int, int>, lo
 }
 
 
-void DijkstraWithHeap::InitByEdgesUndirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
+void AStar::InitByEdgesUndirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
   graf.resize(2*n);
   for(auto edge: vector_of_edges) {
     graf[edge.first.first].push_back(Vertex(edge.first.second, edge.second));
@@ -19,18 +19,18 @@ void DijkstraWithHeap::InitByEdgesUndirected(int n, vector<pair<pair<int, int>, 
 }
 
 
-long long DijkstraWithHeap::Do(int start_vertex, int end_vertex) {
+long long AStar::Do(int start_vertex, int end_vertex) {
   auto distance = new long long[graf.size()];
 
   for(unsigned int i = 0; i < graf.size(); ++i) {
     distance[i] = LONG_MAX;
   }
 
-  auto queue = new priority_queue<Vertex>;
-  queue->push(Vertex(start_vertex, 0));
+  auto queue = new priority_queue<ExpextedVertex>;
+  queue->push(ExpextedVertex(start_vertex, 0, 0));
 
   while(!queue->empty()) {
-    Vertex top = queue->top();
+    ExpextedVertex top = queue->top();
     queue->pop();
     if(top.distance >= distance[top.vertex]) {
       continue;
@@ -43,7 +43,8 @@ long long DijkstraWithHeap::Do(int start_vertex, int end_vertex) {
 
     for(auto child: graf[top.vertex]) {
       if(distance[child.vertex] > distance[top.vertex]) {
-        queue->push(Vertex(child.vertex, top.distance + child.distance));
+        queue->push(ExpextedVertex(child.vertex, top.distance + child.distance,
+            top.distance + child.distance + std::abs(x[child.vertex] - x[end_vertex]) +std::abs(y[child.vertex] - y[end_vertex])));
       }
     }
 
@@ -53,4 +54,12 @@ long long DijkstraWithHeap::Do(int start_vertex, int end_vertex) {
   delete queue;
   delete[] distance;
   return ret;
+}
+AStar::AStar(int n, int *x_from, int *y_from) {
+  x.resize(n);
+  y.resize(n);
+  for(int i = 0; i < n; ++i) {
+    x[i] = x_from[i];
+    y[i] = y_from[i];
+  }
 }

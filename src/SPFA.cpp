@@ -1,12 +1,22 @@
 #include "SPFA.h"
 #include <climits>
 
-void SPFA::InitByEdges(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
+void SPFA::InitByEdgesDirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
   graf.resize(n);
   for(auto edge: vector_of_edges) {
     graf[edge.first.first].push_back(Vertex(edge.first.second, edge.second));
   }
 }
+
+
+void SPFA::InitByEdgesUndirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) {
+  graf.resize(2*n);
+  for(auto edge: vector_of_edges) {
+    graf[edge.first.first].push_back(Vertex(edge.first.second, edge.second));
+    graf[edge.first.second].push_back(Vertex(edge.first.first, edge.second));
+  }
+}
+
 
 long long SPFA::Do(int start_vertex, int end_vertex) {
   auto distance = new long long[graf.size()];
