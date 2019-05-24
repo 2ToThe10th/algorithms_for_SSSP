@@ -9,7 +9,7 @@ using std::vector;
 using std::pair;
 
 class Thorup: public SSSP {
- private:
+ public:
   struct Vertex {
     int vertex;
     long long distance;
@@ -19,10 +19,9 @@ class Thorup: public SSSP {
     }
   };
 
-  void FindComp(int v, char* is_in_comp);
+  void FindComp(int v, short* is_in_comp);
 
   vector<vector<Vertex>> input_graf;
- public:
   void InitByEdgesDirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) override;
   void InitByEdgesUndirected(int n, vector<pair<pair<int, int>, long long>> vector_of_edges) override;
 

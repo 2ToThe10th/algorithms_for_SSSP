@@ -5,6 +5,7 @@
 #include <chrono>
 #include <AStar.h>
 #include <Thorup.h>
+#include <AStarWithFibonacciHeap.h>
 #include "DijkstraWithHeap.h"
 #include "DijkstraWithFibonacciHeap.h"
 #include "BellmanFord.h"
@@ -14,17 +15,9 @@ using std::cout;
 using std::endl;
 using std::pair;
 
-const int TEST_QUANTITY = 1;
+const int TEST_QUANTITY = 5;
 const int MAP_SIZE = 3e2;
-const int N = 1e4;
-
-TEST(Thorup, test) {
-  auto thorup = new Thorup();
-
-  thorup->InitByEdgesUndirected(5, {{{0, 1}, 4}, {{1, 4}, 3}, {{2, 3}, 5}});
-
-  cout << thorup->Do(0 , 4);
-}
+const int N = 1000;
 
 TEST(SpeedTest, RandomDirectedGraph) {
 
@@ -39,7 +32,7 @@ TEST(SpeedTest, RandomDirectedGraph) {
 
     vector<pair<pair<int, int>, long long>> v;
 
-    const int MAX_EDGE = 1e6;
+    const int MAX_EDGE = std::min<int>(1e6, N*N);
     const int MAX_LENGTH = 1e6;
 
     int m = (generate_random() % MAX_EDGE + MAX_EDGE) % MAX_EDGE;
@@ -47,7 +40,7 @@ TEST(SpeedTest, RandomDirectedGraph) {
     for (int i = 0; i < m; ++i) {
       int s = (generate_random() % N + N) % N;
       int e = (generate_random() % N + N) % N;
-      int l = (generate_random() % MAX_LENGTH + MAX_LENGTH ) % MAX_LENGTH;
+      int l = (generate_random() % MAX_LENGTH + MAX_LENGTH ) % MAX_LENGTH + 1;
       v.push_back({{s, e}, l});
     }
 
@@ -100,22 +93,25 @@ TEST(SpeedTest, RandomUndirectedGraph) {
   long long dijkstra_with_fibonacci_heap_time = 0;
   long long bellman_ford_time = 0;
   long long spfa_time = 0;
+  long long thorup_time = 0;
 
   for(int id = 0; id < TEST_QUANTITY; ++id) {
+
+    //cout << id << endl;
 
     std::mt19937 generate_random(id);
 
     vector<pair<pair<int, int>, long long>> v;
 
-    const int MAX_EDGE = 1e6;
-    const int MAX_LENGTH = 1e6;
+    const int MAX_EDGE = std::min<int>(1e6, N*N);
+    const int MAX_LENGTH = 1e4;
 
     int m = (generate_random() % MAX_EDGE + MAX_EDGE) % MAX_EDGE;
 
     for (int i = 0; i < m; ++i) {
       int s = (generate_random() % N + N) % N;
       int e = (generate_random() % N + N) % N;
-      int l = (generate_random() % MAX_LENGTH + MAX_LENGTH ) % MAX_LENGTH;
+      int l = (generate_random() % MAX_LENGTH + MAX_LENGTH ) % MAX_LENGTH + 1;
       v.push_back({{s, e}, l});
     }
 
@@ -123,7 +119,7 @@ TEST(SpeedTest, RandomUndirectedGraph) {
 
     SSSP* sssp = nullptr;
     long long* timer = nullptr;
-    for (int index = 0; index < 4; ++index) {
+    for (int index = 0; index < 5; ++index) {
       switch (index) {
         case 0:
           sssp = new DijkstraWithHeap();
@@ -141,6 +137,9 @@ TEST(SpeedTest, RandomUndirectedGraph) {
           sssp = new SPFA();
           timer = &spfa_time;
           break;
+        case 4:
+          sssp = new Thorup();
+          timer = &thorup_time;
       }
       sssp->InitByEdgesUndirected(N, v);
       std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -160,6 +159,7 @@ TEST(SpeedTest, RandomUndirectedGraph) {
   cout << "DijkstraWithFibonacciHeap:" << double(dijkstra_with_fibonacci_heap_time) / TEST_QUANTITY << '\n';
   cout << "BellmanFord              :" << double(bellman_ford_time) / TEST_QUANTITY << '\n';
   cout << "SPFA                     :" << double(spfa_time) / TEST_QUANTITY << '\n';
+  cout << "Thorup                   :" << double(thorup_time) / TEST_QUANTITY << '\n';
 }
 
 
@@ -168,6 +168,7 @@ TEST(SpeedTest, RandomCityDirectedGraph) {
   long long dijkstra_with_heap_time = 0;
   long long dijkstra_with_fibonacci_heap_time = 0;
   long long a_star_time = 0;
+  long long a_star_with_fibonacci_time = 0;
   long long bellman_ford_time = 0;
   long long spfa_time = 0;
 
@@ -220,7 +221,7 @@ TEST(SpeedTest, RandomCityDirectedGraph) {
 
     SSSP* sssp = nullptr;
     long long* timer = nullptr;
-    for (int index = 0; index < 5; ++index) {
+    for (int index = 0; index < 6; ++index) {
       switch (index) {
         case 0:
           sssp = new DijkstraWithHeap();
@@ -235,10 +236,14 @@ TEST(SpeedTest, RandomCityDirectedGraph) {
           timer = &a_star_time;
           break;
         case 3:
+          sssp = new AStarWithFibonacciHeap(N, x, y);
+          timer = &a_star_with_fibonacci_time;
+          break;
+        case 4:
           sssp = new BellmanFord();
           timer = &bellman_ford_time;
           break;
-        case 4:
+        case 5:
           sssp = new SPFA();
           timer = &spfa_time;
           break;
@@ -263,6 +268,7 @@ TEST(SpeedTest, RandomCityDirectedGraph) {
   cout << "DijkstraWithHeap         :" << double(dijkstra_with_heap_time) / TEST_QUANTITY << '\n';
   cout << "DijkstraWithFibonacciHeap:" << double(dijkstra_with_fibonacci_heap_time) / TEST_QUANTITY << '\n';
   cout << "AStar                    :" << double(a_star_time) / TEST_QUANTITY << '\n';
+  cout << "AStarWithFibonacciHeap   :" << double(a_star_with_fibonacci_time) / TEST_QUANTITY << '\n';
   cout << "BellmanFord              :" << double(bellman_ford_time) / TEST_QUANTITY << '\n';
   cout << "SPFA                     :" << double(spfa_time) / TEST_QUANTITY << '\n';
 }
@@ -273,8 +279,10 @@ TEST(SpeedTest, RandomCityUndirectedGraph) {
   long long dijkstra_with_heap_time = 0;
   long long dijkstra_with_fibonacci_heap_time = 0;
   long long a_star_time = 0;
+  long long a_star_with_fibonacci_time = 0;
   long long bellman_ford_time = 0;
   long long spfa_time = 0;
+  long long thorup_time = 0;
 
   for(int id = 0; id < TEST_QUANTITY; ++id) {
 
@@ -325,7 +333,7 @@ TEST(SpeedTest, RandomCityUndirectedGraph) {
 
     SSSP* sssp = nullptr;
     long long* timer = nullptr;
-    for (int index = 0; index < 5; ++index) {
+    for (int index = 0; index < 7; ++index) {
       switch (index) {
         case 0:
           sssp = new DijkstraWithHeap();
@@ -340,13 +348,20 @@ TEST(SpeedTest, RandomCityUndirectedGraph) {
           timer = &a_star_time;
           break;
         case 3:
+          sssp = new AStarWithFibonacciHeap(N, x, y);
+          timer = &a_star_with_fibonacci_time;
+          break;
+        case 4:
           sssp = new BellmanFord();
           timer = &bellman_ford_time;
           break;
-        case 4:
+        case 5:
           sssp = new SPFA();
           timer = &spfa_time;
           break;
+        case 6:
+          sssp = new Thorup();
+          timer = &thorup_time;
       }
       sssp->InitByEdgesUndirected(N, v);
       std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -368,6 +383,8 @@ TEST(SpeedTest, RandomCityUndirectedGraph) {
   cout << "DijkstraWithHeap         :" << double(dijkstra_with_heap_time) / TEST_QUANTITY << '\n';
   cout << "DijkstraWithFibonacciHeap:" << double(dijkstra_with_fibonacci_heap_time) / TEST_QUANTITY << '\n';
   cout << "AStar                    :" << double(a_star_time) / TEST_QUANTITY << '\n';
+  cout << "AStarWithFibonacciHeap   :" << double(a_star_with_fibonacci_time) / TEST_QUANTITY << '\n';
   cout << "BellmanFord              :" << double(bellman_ford_time) / TEST_QUANTITY << '\n';
   cout << "SPFA                     :" << double(spfa_time) / TEST_QUANTITY << '\n';
+  cout << "Thorup                   :" << double(thorup_time) / TEST_QUANTITY << '\n';
 }
